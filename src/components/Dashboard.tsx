@@ -1,54 +1,66 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  BarChart3, TrendingUp, Crown, Users, History, Sparkles, Zap,
+  BarChart3, TrendingUp, Crown, Users, History, Sparkles,
   ArrowUpRight, ArrowDownRight, Bell, Settings, LogOut,
-  Plus, UserPlus, Gift, Target, Wallet, PiggyBank,
+  Plus, UserPlus, Gift, Target, Wallet as WalletIcon, PiggyBank,
   Send, CheckCircle, Copy, Flame, Sun, Moon
 } from "lucide-react";
 import { BottomNav } from "./BottomNav";
 import { Logo } from "./Logo";
 import { VIPCard } from "./VIPCard";
-import { StakingCard } from "./StakingCard";
+import DepositForm from "./DepositForm";
+import WithdrawalForm from "./WithdrawalFormNew";
 import { useToast } from "./ToastContainer";
-import { VIP_LEVELS, STAKING_LOTS } from "../constants";
+import { VIP_LEVELS } from "../constants";
 import { formatCurrency } from "../utils/calculations";
 import { Transaction, UserType } from "../types";
+import api from "../utils/api";
 
 interface DashboardProps {
   user: UserType | null;
   onLogout: () => void;
 }
 
-type TabKey = "overview" | "vip" | "staking" | "wallet" | "team" | "history" | "support";
+type TabKey = "overview" | "vip" | "wallet" | "team" | "history" | "support" | "deposit" | "withdrawal";
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [selectedVIPLevel, setSelectedVIPLevel] = useState<number | null>(null);
-  const [selectedStakingLot, setSelectedStakingLot] = useState<number | null>(null);
   const toast = useToast();
   const [isDark, setIsDark] = useState<boolean>(true); // Dark mode by default
-  const heroRef = useRef<HTMLDivElement | null>(null);
 
-  const walletBalance = 125000;
-  const totalInvested = 285000;
-  const totalEarned = 95000;
-  const activeInvestments = 3;
+  const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      loadTransactions();
+    }
+  }, [user]);
+
+  const loadTransactions = async () => {
+    try {
+      const response = await api.getTransactions(10);
+      if (response.success && response.data) {
+        setRecentTransactions(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+    }
+  };
+
+  // Mock data
   const referralCode = 'APUIC12345';
-
-  const recentTransactions: Transaction[] = [
-    { id: '1', userId: user?.id || '', type: 'earning', amount: 7500, status: 'completed', description: 'Gains quotidiens VIP Gold + Staking Lot 4', createdAt: '2025-01-18T08:00:00Z' },
-    { id: '2', userId: user?.id || '', type: 'deposit', amount: 50000, status: 'approved', description: 'Dépôt Mobile Money', createdAt: '2025-01-17T14:30:00Z' },
-    { id: '3', userId: user?.id || '', type: 'commission', amount: 3000, status: 'completed', description: 'Commission parrainage niveau 1', createdAt: '2025-01-16T10:15:00Z' },
-    { id: '4', userId: user?.id || '', type: 'withdrawal', amount: 20000, status: 'completed', description: 'Retrait portefeuille', createdAt: '2025-01-15T12:00:00Z' },
-    { id: '5', userId: user?.id || '', type: 'earning', amount: 5200, status: 'completed', description: 'Gains quotidiens Staking Lot 5', createdAt: '2025-01-14T08:30:00Z' },
-  ];
+  const walletBalance = 45000;
+  const totalInvested = 100000;
+  const totalEarned = 15000;
+  const activeInvestments = 3;
 
   const teamMembers = [
     { id: 1, name: "Koffi A.", country: "🇹🇬", level: "VIP Silver", earnings: 15000, date: "2025-01-10", status: "active" },
-    { id: 2, name: "Adjoa M.", country: "🇨🇮", level: "Staking Lot 3", earnings: 8000, date: "2025-01-08", status: "active" },
+    { id: 2, name: "Adjoa M.", country: "🇨🇮", level: "VIP Silver", earnings: 8000, date: "2025-01-08", status: "active" },
     { id: 3, name: "Moussa S.", country: "🇧🇫", level: "VIP Gold", earnings: 25000, date: "2025-01-05", status: "active" },
     { id: 4, name: "Awa B.", country: "🇸🇳", level: "VIP Bronze", earnings: 5500, date: "2025-01-03", status: "active" },
-    { id: 5, name: "Kofi Y.", country: "🇬🇭", level: "Staking Lot 2", earnings: 3200, date: "2025-01-01", status: "inactive" },
+    { id: 5, name: "Kofi Y.", country: "🇬🇭", level: "VIP Bronze", earnings: 3200, date: "2025-01-01", status: "inactive" },
   ];
 
   // Theme handling - Dark mode by default
@@ -59,22 +71,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     if (initial) document.documentElement.classList.add('dark');
   }, []);
 
+  // Load wallet data
+  useEffect(() => {
+    if (user) {
+      loadTransactions();
+    }
+  }, [user]);
+
+  const loadWallet = async () => {
+    try {
+      const response = await api.getWallet();
+      if (response.success && response.data) {
+        // Mock handling
+      }
+    } catch (error) {
+      console.error('Failed to load wallet:', error);
+    }
+  };
+
   // Hero auto-scroll
   useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    let idx = 0;
-    const children = Array.from(el.children) as HTMLElement[];
-    if (!children.length) return;
     const interval = setInterval(() => {
-      idx = (idx + 1) % children.length;
-      const target = children[idx];
-      if (target) {
-        el.scrollTo({ left: target.offsetLeft - el.offsetLeft, behavior: 'smooth' });
-      }
+      // Auto scroll will be handled by CSS snap scrolling
     }, 4000);
     return () => clearInterval(interval);
-  }, [heroRef]);
+  }, []);
 
   const toggleTheme = () => {
     const next = !isDark;
@@ -84,10 +105,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
     localStorage.setItem('ap_theme', next ? 'dark' : 'light');
   };
 
-  const handleInvestmentSubmit = (type: 'vip' | 'stake') => {
-    toast.success(`Investissement ${type === 'vip' ? 'VIP' : 'Staking'} confirmé avec succès !`);
-    if (type === 'vip') setSelectedVIPLevel(null);
-    else setSelectedStakingLot(null);
+  const handleInvestmentSubmit = async () => {
+    if (!selectedVIPLevel) return;
+    
+    const level = VIP_LEVELS.find(l => l.level === selectedVIPLevel);
+    if (!level) return;
+
+    const amount = level.min_amount;
+    
+    try {
+      const response = await api.purchaseVIP(selectedVIPLevel, amount);
+      
+      if (response.success) {
+        toast.success(`Investissement VIP ${level.name} confirmé avec succès !`);
+        setSelectedVIPLevel(null);
+        await loadWallet();
+      } else {
+        throw new Error(response.error || 'Erreur lors de l\'achat');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'achat VIP');
+    }
   };
 
   const copyToClipboard = (text: string) => {
@@ -155,8 +193,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               {[
                 { key: "overview", label: "Tableau de bord", icon: BarChart3, gradient: "from-blue-500 to-cyan-500" },
                 { key: "vip", label: "VIP", icon: Crown, gradient: "from-yellow-500 to-orange-500" },
-                { key: "staking", label: "Staking", icon: Target, gradient: "from-emerald-500 to-green-500" },
-                { key: "wallet", label: "Portefeuille", icon: Wallet, gradient: "from-violet-500 to-purple-500" },
+                { key: "wallet", label: "Portefeuille", icon: WalletIcon, gradient: "from-violet-500 to-purple-500" },
                 { key: "team", label: "Équipe", icon: Users, gradient: "from-pink-500 to-rose-500" },
               ].map(({ key, label, icon: Icon, gradient }) => (
                 <button
@@ -215,14 +252,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
             {/* HERO DÉFILANT */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up">
               <div
-                ref={heroRef}
-                className="flex gap-4 py-6 px-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-                style={{ scrollBehavior: 'smooth' }}
-              >
+              className="flex gap-4 py-6 px-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+              style={{ scrollBehavior: 'smooth' }}
+            >
                 {[
                   { title: "VIP Gold", desc: "10% quotidien - 90 jours", min: 25000, color: "from-amber-400 to-orange-600" },
                   { title: "VIP Diamond", desc: "10% quotidien - Premium", min: 100000, color: "from-cyan-300 to-blue-600" },
-                  { title: "Staking Pro", desc: "Jusqu'à 15% - Court terme", min: 2500, color: "from-emerald-400 to-green-600" },
+                  { title: "VIP Platinum", desc: "10% quotidien - 90 jours", min: 50000, color: "from-emerald-400 to-green-600" },
                   { title: "VIP Master", desc: "Accès VIP+ & Parrainage", min: 500000, color: "from-purple-400 to-pink-600" },
                 ].map((promo, i) => (
                   <div
@@ -237,7 +273,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                     <div className="flex items-center justify-between bg-white/20 rounded-lg p-3 backdrop-blur">
                       <span className="text-xs font-semibold">Min: {formatCurrency(promo.min)}</span>
                       <button
-                        onClick={() => { setActiveTab('vip'); toast.info('Voir VIPs'); }}
+                        onClick={() => setActiveTab('vip')}
                         className="bg-white/30 hover:bg-white/40 text-white px-3 py-1 rounded-lg text-xs font-semibold transition-all"
                       >
                         Investir →
@@ -253,7 +289,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <StatCard
                 title="Solde Disponible"
                 value={formatCurrency(walletBalance)}
-                icon={<Wallet className="w-6 h-6" />}
+                icon={<WalletIcon className="w-6 h-6" />}
                 gradient="from-emerald-500 to-green-500"
               />
               <StatCard
@@ -265,9 +301,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <StatCard
                 title="Gains Totaux"
                 value={formatCurrency(totalEarned)}
-                change={`+${formatCurrency(7500)}`}
-                changePercent={15.2}
-                trend="up"
+                change={totalEarned > 0 ? `+${formatCurrency(totalEarned)}` : undefined}
+                changePercent={totalEarned > 0 ? 15.2 : undefined}
+                trend={totalEarned > 0 ? "up" : undefined}
                 icon={<TrendingUp className="w-6 h-6" />}
                 gradient="from-violet-500 to-purple-500"
               />
@@ -291,16 +327,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               </button>
 
               <button
-                onClick={() => { setActiveTab('staking'); toast.info('Explorez nos lots de staking'); }}
+                onClick={() => { setActiveTab('deposit'); toast.info('Effectuez un dépôt'); }}
                 className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6 rounded-2xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up shadow-lg"
               >
-                <Zap className="w-8 h-8 mb-3 mx-auto" />
-                <div className="text-sm font-semibold">Staking</div>
-                <div className="text-xs opacity-90 mt-1">Jusqu'à 15% quotidien</div>
+                <Plus className="w-8 h-8 mb-3 mx-auto" />
+                <div className="text-sm font-semibold">Dépôt</div>
+                <div className="text-xs opacity-90 mt-1">Min. {formatCurrency(3000)}</div>
               </button>
 
               <button
-                onClick={() => { setActiveTab('wallet'); toast.info('Gérez votre portefeuille'); }}
+                onClick={() => setActiveTab('deposit')}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6 rounded-2xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up shadow-lg"
               >
                 <Plus className="w-8 h-8 mb-3 mx-auto" />
@@ -329,7 +365,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                   <VIPCard
                     key={level.level}
                     level={level}
-                    onSelect={() => { setSelectedVIPLevel(level.level); setActiveTab('vip'); toast.success(`Niveau ${level.level} sélectionné`); }}
+                    onSelect={() => { setSelectedVIPLevel(level.level); setActiveTab('vip'); }}
                     isSelected={selectedVIPLevel === level.level}
                     userBalance={walletBalance}
                   />
@@ -351,7 +387,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                 <VIPCard
                   key={level.level}
                   level={level}
-                  onSelect={() => { setSelectedVIPLevel(level.level); handleInvestmentSubmit('vip'); }}
+                  onSelect={() => { setSelectedVIPLevel(level.level); handleInvestmentSubmit(); }}
                   isSelected={selectedVIPLevel === level.level}
                   userBalance={walletBalance}
                 />
@@ -360,25 +396,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           </div>
         )}
 
-        {activeTab === 'staking' && (
-          <div className="space-y-6 animate-fade-in-up">
-            <div className="flex items-center space-x-3 mb-2">
-              <Zap className="w-8 h-8 text-blue-500" />
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Lots de Staking</h2>
-            </div>
-            <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Investissements flexibles avec rendements élevés et durées courtes.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {STAKING_LOTS.map(lot => (
-                <StakingCard key={lot.lot} lot={lot} onSelect={() => { setSelectedStakingLot(lot.lot); handleInvestmentSubmit('stake'); }} isSelected={selectedStakingLot === lot.lot} />
-              ))}
-            </div>
-          </div>
-        )}
 
         {activeTab === 'wallet' && (
           <div className="space-y-6 animate-fade-in-up">
             <div className="flex items-center space-x-3 mb-2">
-              <Wallet className="w-8 h-8 text-green-500" />
+              <WalletIcon className="w-8 h-8 text-green-500" />
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Mon Portefeuille</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -388,11 +410,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                   <span>Effectuer un dépôt</span>
                 </h3>
                 <button
-                  onClick={() => toast.success('Demande de dépôt soumise ! Elle sera traitée dans les 24h.')}
+                  onClick={() => setActiveTab('deposit')}
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-lg"
                 >
                   <CheckCircle className="w-5 h-5 inline mr-2" />
-                  Soumettre la demande
+                  Nouveau dépôt
                 </button>
               </div>
 
@@ -402,15 +424,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                   <span>Effectuer un retrait</span>
                 </h3>
                 <button
-                  onClick={() => toast.info('Demande de retrait soumise. Traitement durant les heures de support.')}
+                  onClick={() => setActiveTab('withdrawal')}
                   className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-700 transition-all transform hover:scale-105 shadow-lg"
                 >
                   <CheckCircle className="w-5 h-5 inline mr-2" />
-                  Demander le retrait
+                  Nouveau retrait
                 </button>
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'deposit' && (
+          <DepositForm
+            onBack={() => setActiveTab('wallet')}
+            onSuccess={() => {
+              setActiveTab('wallet');
+              loadWallet();
+            }}
+            userBalance={walletBalance}
+            userCountry={user?.country}
+          />
+        )}
+
+        {activeTab === 'withdrawal' && (
+          <WithdrawalForm
+            onBack={() => setActiveTab('wallet')}
+            onSuccess={() => {
+              setActiveTab('wallet');
+              loadWallet();
+            }}
+            userBalance={walletBalance}
+            userCountry={user?.country}
+          />
         )}
 
         {activeTab === 'team' && (
@@ -477,8 +523,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
                       {tx.type === 'withdrawal' && <ArrowUpRight className="w-5 h-5 text-red-600 dark:text-red-400" />}
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">{tx.description}</div>
-                      <div className="text-sm text-gray-500 dark:text-slate-400">{new Date(tx.createdAt).toLocaleDateString()} à {new Date(tx.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                      <div className="font-semibold text-gray-900 dark:text-white">{tx.description || tx.type}</div>
+                      <div className="text-sm text-gray-500 dark:text-slate-400">{new Date(tx.created_at).toLocaleDateString()} à {new Date(tx.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                     </div>
                   </div>
                   <div className={`font-bold text-lg ${tx.type === 'withdrawal' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>

@@ -16,7 +16,7 @@ export const VIPCard: React.FC<VIPCardProps> = ({
   isSelected = false,
   userBalance = 0 
 }) => {
-  const canAfford = userBalance >= level.minAmount;
+  const canAfford = userBalance >= level.min_amount;
   
   const getLevelIcon = (levelNum: number) => {
     if (levelNum <= 3) return Crown;
@@ -69,7 +69,7 @@ export const VIPCard: React.FC<VIPCardProps> = ({
               <TrendingUp className="w-4 h-4" />
               <span className="text-xs">Quotidien</span>
             </div>
-            <div className="font-bold text-green-600 dark:text-green-400">10%</div>
+            <div className="font-bold text-green-600 dark:text-green-400">{(level.daily_return * 100).toFixed(0)}%</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 text-gray-600 dark:text-slate-400 mb-1">
@@ -84,26 +84,26 @@ export const VIPCard: React.FC<VIPCardProps> = ({
         <div className="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3">
           <div className="text-xs text-gray-600 dark:text-slate-400 mb-1">Investissement minimum :</div>
           <div className="text-lg font-bold text-gray-900 dark:text-white">
-            {formatCurrency(level.minAmount)}
+            {formatCurrency(level.min_amount)}
           </div>
         </div>
 
         {/* Exemple de gains */}
         <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
           <div className="text-xs text-green-700 dark:text-green-400 mb-2">
-            Exemple avec {formatCurrency(level.minAmount)} :
+            Exemple avec {formatCurrency(level.min_amount)} :
           </div>
           <div className="space-y-1">
             <div className="flex justify-between text-sm">
               <span className="text-green-700 dark:text-green-400">Gain quotidien :</span>
               <span className="font-semibold text-green-800 dark:text-green-300">
-                {formatCurrency(level.minAmount * level.dailyReturn)}
+                {formatCurrency(level.min_amount * level.daily_return)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-green-700 dark:text-green-400">Gain total (90j) :</span>
               <span className="font-bold text-green-800 dark:text-green-300">
-                {formatCurrency(level.minAmount * level.dailyReturn * level.duration)}
+                {formatCurrency(level.min_amount * level.daily_return * level.duration)}
               </span>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Country, VIPLevel, StakingLot } from '../types';
+import { Country, VIPLevel } from '../types';
 
 export const COUNTRIES: Country[] = [
   { code: 'TG', name: 'Togo', flag: '🇹🇬', dialCode: '+228', color: '#228B22' },
@@ -9,33 +9,24 @@ export const COUNTRIES: Country[] = [
 ];
 
 export const VIP_LEVELS: VIPLevel[] = [
-  { level: 1, name: 'VIP Bronze', minAmount: 3000, dailyReturn: 0.10, duration: 90, color: '#CD7F32' },
-  { level: 2, name: 'VIP Silver', minAmount: 10000, dailyReturn: 0.10, duration: 90, color: '#C0C0C0' },
-  { level: 3, name: 'VIP Gold', minAmount: 25000, dailyReturn: 0.10, duration: 90, color: '#FFD700' },
-  { level: 4, name: 'VIP Platinum', minAmount: 50000, dailyReturn: 0.10, duration: 90, color: '#E5E4E2' },
-  { level: 5, name: 'VIP Diamond', minAmount: 100000, dailyReturn: 0.10, duration: 90, color: '#B9F2FF' },
-  { level: 6, name: 'VIP Elite', minAmount: 250000, dailyReturn: 0.10, duration: 90, color: '#800080' },
-  { level: 7, name: 'VIP Master', minAmount: 500000, dailyReturn: 0.10, duration: 90, color: '#FF1493' },
-  { level: 8, name: 'VIP Legend', minAmount: 1000000, dailyReturn: 0.10, duration: 90, color: '#FF4500' },
-  { level: 9, name: 'VIP Supreme', minAmount: 2000000, dailyReturn: 0.10, duration: 90, color: '#8B0000' },
-  { level: 10, name: 'VIP Ultimate', minAmount: 5000000, dailyReturn: 0.10, duration: 90, color: '#000000' },
+  { level: 1, name: 'VIP Bronze', min_amount: 3000, daily_return: 0.10, duration: 90, color: '#CD7F32' },
+  { level: 2, name: 'VIP Silver', min_amount: 10000, daily_return: 0.10, duration: 90, color: '#C0C0C0' },
+  { level: 3, name: 'VIP Gold', min_amount: 25000, daily_return: 0.10, duration: 90, color: '#FFD700' },
+  { level: 4, name: 'VIP Platinum', min_amount: 50000, daily_return: 0.10, duration: 90, color: '#E5E4E2' },
+  { level: 5, name: 'VIP Diamond', min_amount: 100000, daily_return: 0.10, duration: 90, color: '#B9F2FF' },
+  { level: 6, name: 'VIP Elite', min_amount: 250000, daily_return: 0.10, duration: 90, color: '#800080' },
+  { level: 7, name: 'VIP Master', min_amount: 500000, daily_return: 0.10, duration: 90, color: '#FF1493' },
+  { level: 8, name: 'VIP Legend', min_amount: 1000000, daily_return: 0.10, duration: 90, color: '#FF4500' },
+  { level: 9, name: 'VIP Supreme', min_amount: 2000000, daily_return: 0.10, duration: 90, color: '#8B0000' },
+  { level: 10, name: 'VIP Ultimate', min_amount: 5000000, daily_return: 0.10, duration: 90, color: '#000000' },
 ];
 
-// Plan de Staking basé sur l'image fournie
-export const STAKING_LOTS: StakingLot[] = [
-  { lot: 1, duration: 5, dailyRate: 5, totalReturn: 25, minAmount: 2500 },
-  { lot: 2, duration: 10, dailyRate: 7, totalReturn: 70, minAmount: 2500 },
-  { lot: 3, duration: 15, dailyRate: 8, totalReturn: 120, minAmount: 2500 },
-  { lot: 4, duration: 20, dailyRate: 10, totalReturn: 200, minAmount: 2500 },
-  { lot: 5, duration: 30, dailyRate: 11, totalReturn: 330, minAmount: 2500 },
-  { lot: 6, duration: 45, dailyRate: 13, totalReturn: 585, minAmount: 2500 },
-  { lot: 7, duration: 60, dailyRate: 15, totalReturn: 900, minAmount: 2500 },
-];
+// Staking removed completely
 
 export const REFERRAL_RATES = {
-  level1: 0.15, // 15%
+  level1: 0.30, // 30%
   level2: 0.03, // 3%
-  level3: 0.02, // 2%
+  level3: 0.03, // 3%
 };
 
 export const PLATFORM_CONFIG = {
@@ -51,10 +42,10 @@ export const PLATFORM_CONFIG = {
 export const SLOGAN = "5 pays. 1 vision. 90 jours pour transformer ton capital.";
 
 export const PAYMENT_METHODS = [
-  'Mobile Money',
+  'MTN Mobile Money',
+  'MOOV Money',
+  'Tmoney',
   'Orange Money',
-  'MTN Money',
-  'Moov Money',
   'Wave',
   'Virement bancaire',
 ];

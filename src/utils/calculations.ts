@@ -1,4 +1,4 @@
-import { VIP_LEVELS, STAKING_LOTS, REFERRAL_RATES } from '../constants';
+import { VIP_LEVELS, REFERRAL_RATES } from '../constants';
 
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('fr-FR', {
@@ -12,25 +12,13 @@ export const formatCurrency = (amount: number): string => {
 export const calculateVIPDailyReturn = (amount: number, level: number): number => {
   const vipLevel = VIP_LEVELS.find(v => v.level === level);
   if (!vipLevel) return 0;
-  return amount * vipLevel.dailyReturn;
+  return amount * vipLevel.daily_return;
 };
 
-export const calculateStakingDailyReturn = (amount: number, lot: number): number => {
-  const stakingLot = STAKING_LOTS.find(s => s.lot === lot);
-  if (!stakingLot) return 0;
-  return amount * (stakingLot.dailyRate / 100);
-};
-
-export const calculateTotalReturn = (amount: number, type: 'vip' | 'stake', levelOrLot: number): number => {
-  if (type === 'vip') {
-    const vipLevel = VIP_LEVELS.find(v => v.level === levelOrLot);
-    if (!vipLevel) return 0;
-    return amount * vipLevel.dailyReturn * vipLevel.duration;
-  } else {
-    const stakingLot = STAKING_LOTS.find(s => s.lot === levelOrLot);
-    if (!stakingLot) return 0;
-    return amount * (stakingLot.totalReturn / 100);
-  }
+export const calculateTotalReturn = (amount: number, level: number): number => {
+  const vipLevel = VIP_LEVELS.find(v => v.level === level);
+  if (!vipLevel) return 0;
+  return amount * vipLevel.daily_return * vipLevel.duration;
 };
 
 export const calculateReferralCommission = (investmentAmount: number, level: 1 | 2 | 3): number => {
@@ -50,13 +38,10 @@ export const calculateWithdrawalFees = (amount: number): { fees: number; netAmou
 
 export const getVIPLevelByAmount = (amount: number): VIPLevel | null => {
   // Trouve le niveau VIP le plus élevé accessible avec ce montant
-  const eligibleLevels = VIP_LEVELS.filter(level => amount >= level.minAmount);
+  const eligibleLevels = VIP_LEVELS.filter(level => amount >= level.min_amount);
   return eligibleLevels.length > 0 ? eligibleLevels[eligibleLevels.length - 1] : null;
 };
 
-export const getStakingLotByNumber = (lot: number): typeof STAKING_LOTS[0] | null => {
-  return STAKING_LOTS.find(s => s.lot === lot) || null;
-};
 
 export const generateReferralCode = (): string => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

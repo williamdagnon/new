@@ -9,7 +9,7 @@ import { validatePhoneNumber, generateReferralCode } from '../utils/calculations
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
-  onSignupSuccess: (phoneNumber: string) => void;
+  onSignupSuccess: (phoneNumber: string, countryCode: string, fullName: string, password: string, referralCode?: string) => void;
 }
 
 export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin, onSignupSuccess }) => {
@@ -100,7 +100,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin, onSignu
       setStep('success');
       // Auto-redirect to dashboard after 2 seconds
       setTimeout(() => {
-        onSignupSuccess(selectedCountry.dialCode + phoneNumber);
+        onSignupSuccess(phoneNumber, selectedCountry.code, fullName, password, referralCode || undefined);
       }, 2000);
     } catch (error) {
       setErrors({ otp: 'Code de vérification incorrect' });

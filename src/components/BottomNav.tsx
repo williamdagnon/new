@@ -1,7 +1,7 @@
 import React from 'react';
-import { BarChart3, Crown, Target, Wallet, Users } from 'lucide-react';
+import { BarChart3, Crown, Wallet, Users } from 'lucide-react';
 
-type TabKey = 'overview' | 'vip' | 'staking' | 'wallet' | 'team' | 'history' | 'support';
+type TabKey = 'overview' | 'vip' | 'wallet' | 'team' | 'history' | 'support' | 'deposit' | 'withdrawal';
 
 interface BottomNavProps {
   activeTab: TabKey;
@@ -12,7 +12,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onChange }) => 
   const items = [
     { key: 'overview', icon: BarChart3, label: 'Overview' },
     { key: 'vip', icon: Crown, label: 'VIP' },
-    { key: 'staking', icon: Target, label: 'Staking' },
     { key: 'wallet', icon: Wallet, label: 'Wallet' },
     { key: 'team', icon: Users, label: 'Team' },
   ];

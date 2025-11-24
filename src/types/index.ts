@@ -11,12 +11,12 @@ export interface UserType {
 
 export interface Wallet {
   id: string;
-  userId: string;
+  user_id: string;
   balance: number;
-  totalInvested: number;
-  totalEarned: number;
-  totalWithdrawn: number;
-  updatedAt: string;
+  total_invested: number;
+  total_earned: number;
+  total_withdrawn: number;
+  updated_at: string;
 }
 
 export interface Country {
@@ -30,102 +30,122 @@ export interface Country {
 export interface VIPLevel {
   level: number;
   name: string;
-  minAmount: number;
-  dailyReturn: number; // 10% fixe
+  min_amount: number;
+  daily_return: number; // 10% fixe
   duration: number; // 90 jours
   color: string;
 }
 
-export interface StakingLot {
-  lot: number;
-  duration: number; // en jours
-  dailyRate: number; // % par jour
-  totalReturn: number; // % total fin période
-  minAmount: number;
+export interface VIPProduct extends VIPLevel {
+  id: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface Investment {
+// Staking removed completely
+
+export interface VIPInvestment {
   id: string;
-  userId: string;
-  type: 'vip' | 'stake';
-  level?: number; // Pour VIP
-  lot?: number; // Pour Staking
+  user_id: string;
+  vip_level: number;
   amount: number;
-  dailyReturn: number;
-  startDate: string;
-  endDate: string;
+  daily_return_amount: number;
+  purchase_time: string; // Exact purchase time
+  next_earning_time: string; // Next 24h earning time
+  start_date: string;
+  end_date: string;
+  days_elapsed: number;
+  total_earned: number;
   status: 'active' | 'completed' | 'cancelled';
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Transaction {
   id: string;
-  userId: string;
-  type: 'deposit' | 'withdrawal' | 'earning' | 'commission' | 'bonus';
+  user_id: string;
+  type: 'deposit' | 'withdrawal' | 'earning' | 'commission' | 'bonus' | 'vip_purchase';
   amount: number;
   status: 'pending' | 'approved' | 'rejected' | 'completed';
-  description: string;
-  createdAt: string;
-  processedAt?: string;
+  description?: string;
+  reference_id?: string;
+  created_at: string;
 }
 
 export interface Deposit {
   id: string;
-  userId: string;
+  user_id: string;
   amount: number;
-  phoneNumber: string;
-  transactionId: string;
-  receiptUrl?: string;
+  payment_method: string;
+  account_number: string;
+  transaction_id?: string;
+  transfer_id?: string;
+  receipt_url?: string;
   status: 'pending' | 'approved' | 'rejected';
-  adminNotes?: string;
-  createdAt: string;
-  processedAt?: string;
+  is_first_deposit: boolean;
+  admin_notes?: string;
+  created_at: string;
+  processed_at?: string;
 }
 
 export interface Withdrawal {
   id: string;
-  userId: string;
+  user_id: string;
   amount: number;
   fees: number; // 6%
-  netAmount: number;
-  paymentMethod: string;
-  phoneNumber: string;
+  net_amount: number;
+  bank_id?: string;
+  bank_name: string;
+  account_number: string;
+  account_holder_name: string;
   status: 'pending' | 'approved' | 'rejected' | 'completed';
-  adminNotes?: string;
-  createdAt: string;
-  processedAt?: string;
+  admin_notes?: string;
+  created_at: string;
+  processed_at?: string;
+}
+
+export interface Bank {
+  id: string;
+  name: string;
+  code?: string;
+  countryCode?: string;
+  isActive: boolean;
 }
 
 export interface ReferralCommission {
   id: string;
-  referrerId: string;
-  referredId: string;
-  investmentId: string;
+  referrer_id: string;
+  referred_id: string;
+  deposit_id: string;
   level: 1 | 2 | 3;
-  rate: number; // 0.15, 0.03, 0.02
+  rate: number; // 0.30, 0.03, 0.03
   amount: number;
   status: 'pending' | 'paid';
-  paidAt?: string;
-  createdAt: string;
+  paid_at?: string;
+  created_at: string;
 }
 
 export interface DailyEarning {
   id: string;
-  userId: string;
-  investmentId: string;
-  investmentType: 'vip' | 'stake';
+  user_id: string;
+  investment_id: string;
   amount: number;
-  earningDate: string;
-  processedAt: string;
+  earning_date: string;
+  earning_time: string;
+  processed_at: string;
 }
 
-export interface GiftCode {
-  id: string;
-  code: string;
-  amount: number;
-  maxUses: number;
-  currentUses: number;
-  expiresAt?: string;
-  isActive: boolean;
-  createdAt: string;
+// API Response types
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface AuthResponse {
+  user: Omit<UserType, 'password'>;
+  wallet: Wallet;
+  token: string;
 }

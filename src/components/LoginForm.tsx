@@ -9,7 +9,7 @@ import { validatePhoneNumber } from '../utils/calculations';
 
 interface LoginFormProps {
   onSwitchToSignup: () => void;
-  onLogin: (phoneNumber: string) => void;
+  onLogin: (phoneNumber: string, countryCode: string, password: string) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup, onLogin }) => {
@@ -56,17 +56,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup, onLogin 
     }
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      if (phoneNumber === demoCredentials.phone && password === demoCredentials.password) {
-        toast.success('Connexion réussie ! Bienvenue sur APUIC CAPITAL.');
-        setTimeout(() => {
-          onLogin(selectedCountry.dialCode + phoneNumber);
-        }, 500);
-      } else {
-        toast.error('Identifiants incorrects. Utilisez les identifiants de démonstration !');
-        setErrors({ general: 'Identifiants incorrects. Utilisez le numéro 12345678 et le mot de passe Demo123!' });
-      }
+      // Call parent's login handler with all required params
+      onLogin(phoneNumber, selectedCountry.code, password);
+      toast.success('Connexion réussie ! Bienvenue sur APUIC CAPITAL.');
     } catch (error) {
       toast.error('Une erreur est survenue. Veuillez réessayer.');
       setErrors({ general: 'Une erreur est survenue. Veuillez réessayer.' });
